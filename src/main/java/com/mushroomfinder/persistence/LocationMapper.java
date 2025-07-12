@@ -1,6 +1,7 @@
 package com.mushroomfinder.persistence;
 
 import com.mushroomfinder.MushroomLocation;
+import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.LocationDto;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -24,6 +25,10 @@ public interface LocationMapper {
     @Mapping(source = "location", target = "location")
     @Mapping(source = "description", target = "description")
     MushroomLocation toMushroomLocation(MushroomLocationInfo mushroomLocationInfo);
+
+    @Mapping(source = "location", target = "location")
+    @Mapping(source = "description", target = "description")
+    MushroomLocation fromCreateLocationRequest(AddLocationRequest addLocationRequest);
 
     default LocationDto map(Point point) {
         if (point == null) {

@@ -4,6 +4,7 @@ import com.mushroomfinder.MushroomLocation;
 import com.mushroomfinder.persistence.LocationMapper;
 import com.mushroomfinder.persistence.LocationRepository;
 import com.mushroomfinder.persistence.MushroomLocationInfo;
+import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.persistence.dto.GeoJsonGeometry;
 import com.mushroomfinder.persistence.dto.LocationDto;
@@ -41,6 +42,18 @@ public class LocationService {
                 .map(this::convertToGeoJsonFeature)
                 .collect(Collectors.toList());
     }
+
+    public MushroomLocation addLocation(AddLocationRequest addLocationRequest) {
+        MushroomLocation mushroomLocation = locationMapper.fromCreateLocationRequest(addLocationRequest);
+        MushroomLocation savedMushroomLocation = mushroomLocationRepository.save(mushroomLocation);
+        return savedMushroomLocation;
+    }
+
+
+
+
+
+
 
     public GeoJsonFeature convertToGeoJsonFeature(MushroomLocationInfo locationInfo) {
         LocationDto location = locationInfo.getLocation();

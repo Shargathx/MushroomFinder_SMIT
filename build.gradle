@@ -43,6 +43,8 @@ dependencies {
     implementation 'org.hibernate:hibernate-spatial:6.4.4.Final'
     implementation 'org.locationtech.jts:jts-core:1.19.0'
 
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
+
     // H2 Database
     testImplementation 'com.h2database:h2'
 
