@@ -56,10 +56,12 @@ public class LocationService {
         locationRepository.save(mushroomLocation);
     }
 
-
-
-
-
+    public void deleteLocation(Integer locationId) {
+        if(!locationRepository.existsById(locationId)) {
+            throw new EntityNotFoundException("Location with id " + locationId + " does not exist");
+        }
+        locationRepository.deleteById(locationId);
+    }
 
     public GeoJsonFeature convertToGeoJsonFeature(MushroomLocationInfo locationInfo) {
         LocationDto location = locationInfo.getLocation();
@@ -71,6 +73,4 @@ public class LocationService {
 
         return new GeoJsonFeature(geometry, properties);
     }
-
-
 }

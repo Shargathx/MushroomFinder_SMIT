@@ -1,7 +1,6 @@
 package com.mushroomfinder.controller;
 
 import com.mushroomfinder.MushroomLocation;
-import com.mushroomfinder.persistence.MushroomLocationInfo;
 import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.service.LocationService;
@@ -19,9 +18,9 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @GetMapping("/{id}/geojson")
-    public ResponseEntity<GeoJsonFeature> getLocationGeoJson(@PathVariable Integer id) {
-        GeoJsonFeature geoJsonFeature = locationService.findLocationGeoJson(id);
+    @GetMapping("/location/{locationId}")
+    public ResponseEntity<GeoJsonFeature> getLocationGeoJson(@PathVariable Integer locationId) {
+        GeoJsonFeature geoJsonFeature = locationService.findLocationGeoJson(locationId);
         return ResponseEntity.ok(geoJsonFeature);
     }
 
@@ -38,10 +37,13 @@ public class LocationController {
     }
 
     @PutMapping("/location/{locationId}")
-    public void updateLocation(@PathVariable Integer locationId, @RequestBody AddLocationRequest addLocationRequest) {
+    public ResponseEntity<Object> updateLocation(@PathVariable Integer locationId, @RequestBody AddLocationRequest addLocationRequest) {
         locationService.updateLocation(locationId, addLocationRequest);
+        return ResponseEntity.noContent().build();
     }
 
-
-    // TODO: delete location
+    @DeleteMapping("/location/{locationId}")
+    public void deleteLocation(@PathVariable Integer locationId) {
+        locationService.deleteLocation(locationId);
+    }
 }
