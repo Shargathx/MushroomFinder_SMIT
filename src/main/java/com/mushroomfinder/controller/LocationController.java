@@ -37,9 +37,11 @@ public class LocationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedMushroomLocation);
     }
 
+    @PutMapping("/location/{locationId}")
+    public void updateLocation(@PathVariable Integer locationId, @RequestBody AddLocationRequest addLocationRequest) {
+        locationService.updateLocation(locationId, addLocationRequest);
+    }
 
 
-
-    // TODO: patch/update location
     // TODO: delete location
 }

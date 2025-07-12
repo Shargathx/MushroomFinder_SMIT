@@ -8,6 +8,7 @@ import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.persistence.dto.GeoJsonGeometry;
 import com.mushroomfinder.persistence.dto.LocationDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,11 @@ import java.util.stream.Collectors;
 
 public class LocationService {
 
-    private final LocationRepository mushroomLocationRepository;
     private final LocationMapper locationMapper;
+    private final LocationRepository locationRepository;
 
     public GeoJsonFeature findLocationGeoJson(Integer locationId) {
-        MushroomLocation mushroomLocation = mushroomLocationRepository.findById(locationId)
+        MushroomLocation mushroomLocation = locationRepository.findById(locationId)
                 .orElseThrow(() -> new RuntimeException("No such location exists"));
         MushroomLocationInfo locationInfo = locationMapper.toMushroomLocationDto(mushroomLocation);
 
@@ -33,7 +34,7 @@ public class LocationService {
     }
 
     public List<GeoJsonFeature> findAllLocationsGeoJson() {
-        List<MushroomLocation> allMushroomLocations = mushroomLocationRepository.findAll();
+        List<MushroomLocation> allMushroomLocations = locationRepository.findAll();
         if (allMushroomLocations.isEmpty()) {
             throw new RuntimeException("No locations exist yet");
         }
@@ -45,10 +46,15 @@ public class LocationService {
 
     public MushroomLocation addLocation(AddLocationRequest addLocationRequest) {
         MushroomLocation mushroomLocation = locationMapper.fromCreateLocationRequest(addLocationRequest);
-        MushroomLocation savedMushroomLocation = mushroomLocationRepository.save(mushroomLocation);
+        MushroomLocation savedMushroomLocation = locationRepository.save(mushroomLocation);
         return savedMushroomLocation;
     }
 
+    public void updateLocation(Integer locationId, AddLocationRequest addLocationRequest) {
+        MushroomLocation mushroomLocation = locationRepository.findById(locationId).orElseThrow(() -> new EntityNotFoundException("No such location exists"));
+        locationMapper.partialUpdate(mushroomLocation, addLocationRequest);
+        locationRepository.save(mushroomLocation);
+    }
 
 
 

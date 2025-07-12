@@ -7,10 +7,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface LocationMapper {
@@ -29,6 +26,10 @@ public interface LocationMapper {
     @Mapping(source = "location", target = "location")
     @Mapping(source = "description", target = "description")
     MushroomLocation fromCreateLocationRequest(AddLocationRequest addLocationRequest);
+
+    @Mapping(source = "location", target = "location")
+    @Mapping(source = "description", target = "description")
+    MushroomLocation partialUpdate(@MappingTarget MushroomLocation mushroomLocation, AddLocationRequest addLocationRequest);
 
     default LocationDto map(Point point) {
         if (point == null) {
