@@ -19,7 +19,8 @@ public class LocationController {
 
     private final LocationService locationService;
 
-
+/*
+    // keeping it for now just in case, but most likely not needed
     @GetMapping("/{locationId}")
     @Operation(summary = "Leiab kõik asukohad vastavalt location Id-le")
     @ApiResponses(value = {
@@ -29,6 +30,7 @@ public class LocationController {
     public MushroomLocationInfo findLocation(@PathVariable Integer locationId) {
         return locationService.findLocation(locationId);
     }
+*/
 
 
     @GetMapping("/{id}/geojson")

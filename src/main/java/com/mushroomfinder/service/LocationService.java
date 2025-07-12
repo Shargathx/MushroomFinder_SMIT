@@ -45,4 +45,7 @@ public class LocationService {
 
         return new GeoJsonFeature(geometry, properties);
     }
+
+
+
 }
