@@ -44,10 +44,10 @@ public class LocationService {
                 .collect(Collectors.toList());
     }
 
-    public MushroomLocation addLocation(AddLocationRequest addLocationRequest) {
-        MushroomLocation mushroomLocation = locationMapper.fromCreateLocationRequest(addLocationRequest);
+    public GeoJsonFeature addLocation(GeoJsonFeature geoJsonFeature) {
+        MushroomLocation mushroomLocation = locationMapper.fromGeoJsonFeature(geoJsonFeature);
         MushroomLocation savedMushroomLocation = locationRepository.save(mushroomLocation);
-        return savedMushroomLocation;
+        return locationMapper.toGeoJsonFeature(savedMushroomLocation);
     }
 
     public void updateLocation(Integer locationId, AddLocationRequest addLocationRequest) {
@@ -68,7 +68,7 @@ public class LocationService {
         GeoJsonGeometry geometry = new GeoJsonGeometry(location.getX(), location.getY());
 
         Map<String, Object> properties = new HashMap<>();
-//        properties.put("id", locationInfo.getId()); // comment this in, if Id is needed in return
+//        properties.put("id", locationInfo.getId()); // <- comment this in, if Id is needed in return
         properties.put("description", locationInfo.getDescription());
 
         return new GeoJsonFeature(geometry, properties);

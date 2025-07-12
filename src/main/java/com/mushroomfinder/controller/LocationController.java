@@ -1,6 +1,8 @@
 package com.mushroomfinder.controller;
 
 import com.mushroomfinder.MushroomLocation;
+import com.mushroomfinder.persistence.LocationMapper;
+import com.mushroomfinder.persistence.LocationRepository;
 import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.service.LocationService;
@@ -17,6 +19,8 @@ import java.util.List;
 public class LocationController {
 
     private final LocationService locationService;
+    private final LocationMapper locationMapper;
+    private final LocationRepository locationRepository;
 
     @GetMapping("/location/{locationId}")
     public ResponseEntity<GeoJsonFeature> getLocationGeoJson(@PathVariable Integer locationId) {
@@ -31,9 +35,9 @@ public class LocationController {
     }
 
     @PostMapping("/location")
-    public ResponseEntity<MushroomLocation> addLocation(@RequestBody AddLocationRequest addLocationRequest) {
-        MushroomLocation savedMushroomLocation = locationService.addLocation(addLocationRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedMushroomLocation);
+    public ResponseEntity<GeoJsonFeature> addLocation(@RequestBody GeoJsonFeature geoJsonFeature) {
+        GeoJsonFeature savedGeoJsonFeature = locationService.addLocation(geoJsonFeature);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedGeoJsonFeature);
     }
 
     @PutMapping("/location/{locationId}")
@@ -47,3 +51,5 @@ public class LocationController {
         locationService.deleteLocation(locationId);
     }
 }
+
+// TODO: test with postman
