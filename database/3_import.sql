@@ -1,0 +1,4 @@
+INSERT INTO mushroom_finder.mushroom_locations (location, description) VALUES
+                                                                           (ST_SetSRID(ST_MakePoint(26.729, 58.378), 4326), 'Found chanterelles and porcini near the old oak forest.'),
+                                                                           (ST_SetSRID(ST_MakePoint(26.712, 58.395), 4326), 'Abundant fly agaric mushrooms spotted close to the river bank.'),
+                                                                           (ST_SetSRID(ST_MakePoint(26.745, 58.369), 4326), 'Several clusters of morels discovered in the mossy pine grove.');
