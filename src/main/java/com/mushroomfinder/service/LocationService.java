@@ -10,6 +10,10 @@ import com.mushroomfinder.persistence.dto.GeoJsonGeometry;
 import com.mushroomfinder.persistence.dto.LocationDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -50,14 +54,25 @@ public class LocationService {
         return locationMapper.toGeoJsonFeature(savedMushroomLocation);
     }
 
-    public void updateLocation(Integer locationId, AddLocationRequest addLocationRequest) {
+    public void updateLocation(Integer locationId, GeoJsonFeature geoJsonFeature) {
         MushroomLocation mushroomLocation = locationRepository.findById(locationId).orElseThrow(() -> new EntityNotFoundException("No such location exists"));
-        locationMapper.partialUpdate(mushroomLocation, addLocationRequest);
+
+        double[] coords = geoJsonFeature.getGeometry().getCoordinates();
+        if(coords == null || coords.length != 2) {
+            throw new IllegalArgumentException("Invalid GeoJSON coordinates");
+        }
+        LocationDto locationDto = new LocationDto(coords[0], coords[1]);
+        mushroomLocation.setLocationDto(locationDto);
+
+        Object description = geoJsonFeature.getProperties().get("description");
+        if(description != null) {
+            mushroomLocation.setDescription(description.toString());
+        }
         locationRepository.save(mushroomLocation);
     }
 
     public void deleteLocation(Integer locationId) {
-        if(!locationRepository.existsById(locationId)) {
+        if (!locationRepository.existsById(locationId)) {
             throw new EntityNotFoundException("Location with id " + locationId + " does not exist");
         }
         locationRepository.deleteById(locationId);

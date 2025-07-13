@@ -26,9 +26,6 @@ public interface LocationMapper {
     @Mapping(source = "description", target = "description")
     MushroomLocation toMushroomLocation(MushroomLocationInfo mushroomLocationInfo);
 
-//    @Mapping(source = "location", target = "location")
-//    @Mapping(source = "description", target = "description")
-//    MushroomLocation fromCreateLocationRequest(AddLocationRequest addLocationRequest);
 
     @Mapping(source = "location", target = "location")
     @Mapping(source = "description", target = "description")

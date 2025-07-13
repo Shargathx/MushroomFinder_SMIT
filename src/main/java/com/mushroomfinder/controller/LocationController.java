@@ -1,6 +1,5 @@
 package com.mushroomfinder.controller;
 
-import com.mushroomfinder.MushroomLocation;
 import com.mushroomfinder.persistence.LocationMapper;
 import com.mushroomfinder.persistence.LocationRepository;
 import com.mushroomfinder.persistence.dto.AddLocationRequest;
@@ -41,8 +40,8 @@ public class LocationController {
     }
 
     @PutMapping("/location/{locationId}")
-    public ResponseEntity<Object> updateLocation(@PathVariable Integer locationId, @RequestBody AddLocationRequest addLocationRequest) {
-        locationService.updateLocation(locationId, addLocationRequest);
+    public ResponseEntity<Object> updateLocation(@PathVariable Integer locationId, @RequestBody GeoJsonFeature geoJsonFeature) {
+        locationService.updateLocation(locationId, geoJsonFeature);
         return ResponseEntity.noContent().build();
     }
 
