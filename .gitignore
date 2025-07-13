@@ -1,9 +1,22 @@
+# Project files
 HELP.md
+
+# Gradle
 .gradle
 build/
-!gradle/wrapper/gradle-wrapper.jar
+!backend/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+# Logs
+*.log
+
+# Environment variables
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
 
 ### STS ###
 .apt_generated
@@ -35,3 +48,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Ignore compiled Java classes anywhere under backend
+backend/**/*.class
+
+# Ignore test reports and coverage data (if generated)
+backend/test-results/
+backend/coverage/
