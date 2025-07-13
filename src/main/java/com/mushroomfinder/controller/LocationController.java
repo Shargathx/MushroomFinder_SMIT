@@ -1,8 +1,5 @@
 package com.mushroomfinder.controller;
 
-import com.mushroomfinder.persistence.LocationMapper;
-import com.mushroomfinder.persistence.LocationRepository;
-import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.service.LocationService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +15,6 @@ import java.util.List;
 public class LocationController {
 
     private final LocationService locationService;
-    private final LocationMapper locationMapper;
-    private final LocationRepository locationRepository;
 
     @GetMapping("/location/{locationId}")
     public ResponseEntity<GeoJsonFeature> getLocationGeoJson(@PathVariable Integer locationId) {
@@ -50,5 +45,3 @@ public class LocationController {
         locationService.deleteLocation(locationId);
     }
 }
-
-// TODO: test with postman

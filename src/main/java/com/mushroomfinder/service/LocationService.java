@@ -4,16 +4,11 @@ import com.mushroomfinder.MushroomLocation;
 import com.mushroomfinder.persistence.LocationMapper;
 import com.mushroomfinder.persistence.LocationRepository;
 import com.mushroomfinder.persistence.MushroomLocationInfo;
-import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.persistence.dto.GeoJsonGeometry;
 import com.mushroomfinder.persistence.dto.LocationDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -33,7 +28,6 @@ public class LocationService {
         MushroomLocation mushroomLocation = locationRepository.findById(locationId)
                 .orElseThrow(() -> new RuntimeException("No such location exists"));
         MushroomLocationInfo locationInfo = locationMapper.toMushroomLocationDto(mushroomLocation);
-
         return convertToGeoJsonFeature(locationInfo);
     }
 
@@ -85,7 +79,6 @@ public class LocationService {
         Map<String, Object> properties = new HashMap<>();
 //        properties.put("id", locationInfo.getId()); // <- comment this in, if Id is needed in return
         properties.put("description", locationInfo.getDescription());
-
         return new GeoJsonFeature(geometry, properties);
     }
 }

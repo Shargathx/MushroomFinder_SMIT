@@ -1,14 +1,16 @@
 package com.mushroomfinder.persistence;
 
 import com.mushroomfinder.MushroomLocation;
-import com.mushroomfinder.persistence.dto.AddLocationRequest;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.persistence.dto.LocationDto;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.Map;
 
@@ -25,11 +27,6 @@ public interface LocationMapper {
     @Mapping(source = "location", target = "location")
     @Mapping(source = "description", target = "description")
     MushroomLocation toMushroomLocation(MushroomLocationInfo mushroomLocationInfo);
-
-
-    @Mapping(source = "location", target = "location")
-    @Mapping(source = "description", target = "description")
-    MushroomLocation partialUpdate(@MappingTarget MushroomLocation mushroomLocation, AddLocationRequest addLocationRequest);
 
     @Mapping(target = "geometry", expression = "java(new GeoJsonGeometry(mushroomLocation.getLocation().getX(), mushroomLocation.getLocation().getY()))")
     @Mapping(target = "properties", expression = "java(java.util.Map.of(\"description\", mushroomLocation.getDescription()))")
@@ -51,9 +48,6 @@ public interface LocationMapper {
         }
         return mushroomLocation;
     }
-
-
-    GeometryFactory toGeoJsonFeature(GeoJsonFeature geoJsonFeature);
 
     default LocationDto map(Point point) {
         if (point == null) {
