@@ -5,7 +5,128 @@
 }
 
 #map {
-  height: 100%;
+  height: 800px;
   width: 100%;
 }
+
+.container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 10px;
+  height: 400px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+}
+
+.lat-lng-column {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.coord-input {
+  width: 100%;
+  padding: 8px 30px 8px 12px;
+  font-size: 14px;
+  text-align: center;
+  box-sizing: border-box;
+  transition: color 0.3s ease;
+  color: black;
+}
+
+.lock-icon {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+
+.coord-input[readonly] {
+  color: #888888;
+}
+
+.description-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  max-height: 200px;
+  padding: 8px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.map-container {
+  flex-grow: 1;
+  height: 100%;
+  min-width: 0;
+  margin-right: 50px;
+}
+
+.form-container,
+.map-container {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  background-color: white;
+  padding: 10px;
+}
+
+.coord-input,
+.description-textarea {
+  text-shadow: 1.5px 1.5px 1px rgba(0, 0, 0, 0.1);
+}
+
+.coord-input::-webkit-outer-spin-button,
+.coord-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.coord-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.input-with-lock {
+  position: relative;
+}
+
+.lock-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 5px;
+  align-self: flex-start;
+  color: #333;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
 

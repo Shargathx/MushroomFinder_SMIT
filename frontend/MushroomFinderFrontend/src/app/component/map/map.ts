@@ -3,15 +3,23 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css'
 import {LocationService} from '../../service/location-service';
 import {MushroomFeature} from "../../model/mushroom-feature.model";
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.html',
+  imports: [
+    FormsModule
+  ],
   styleUrls: ['./map.css']
 })
 
 export class MapComponent implements OnInit {
   private map!: L.Map;
+  latitude: number | null = null;
+  longitude: number | null = null;
+  description: string = '';
+  isLocked = true;
 
   constructor(private locationService: LocationService) {
   }
@@ -54,26 +62,48 @@ export class MapComponent implements OnInit {
 
 
   private onMapClick(e: L.LeafletMouseEvent): void {
-    const desc = prompt("Sisesta kirjeldus seenekoha kohta:");
-    if (!desc) return;
+    const desc: string | null = prompt("Sisesta kirjeldus seenekoha kohta:");
+    if (desc === null || desc.trim() === '') return;
+    this.latitude = e.latlng.lat;
+    this.longitude = e.latlng.lng;
+    this.description = desc;
+  }
+
+  submitLocation(): void {
+    if (this.latitude === null || this.longitude === null) {
+      alert('Please click on the map and enter valid coordinates.');
+      return;
+    } else if (!this.description.trim()) {
+      alert('Please enter a valid description.');
+      return;
+    }
 
     const geoJsonFeature: MushroomFeature = {
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [e.latlng.lng, e.latlng.lat]
+        coordinates: [this.longitude, this.latitude]
       },
       properties: {
-        description: desc
+        description: this.description
       }
     };
 
     this.locationService.addLocation(geoJsonFeature).subscribe(() => {
       L.geoJSON(geoJsonFeature, {
         onEachFeature: (feature, layer) => {
-          layer.bindPopup(desc);
+          layer.bindPopup(this.description).openPopup();
         }
       }).addTo(this.map);
+
+      this.latitude = null;
+      this.longitude = null;
+      this.description = '';
     });
   }
+
+  toggleLock(): void {
+    this.isLocked = !this.isLocked;
+  }
+
 }
