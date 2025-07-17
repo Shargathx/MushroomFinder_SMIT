@@ -3,5 +3,5 @@ import {AppComponent} from './app/app';
 import {provideHttpClient, withFetch} from "@angular/common/http";
 
 bootstrapApplication(AppComponent, {
-    providers: [provideHttpClient(withFetch())]
+  providers: [provideHttpClient(withFetch())]
 });

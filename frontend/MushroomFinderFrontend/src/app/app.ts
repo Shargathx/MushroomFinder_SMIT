@@ -1,6 +1,6 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MapComponent } from './component/map/map';
+import {Component, signal} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {MapComponent} from './component/map/map';
 import {HttpClientModule} from '@angular/common/http';
 
 @Component({
