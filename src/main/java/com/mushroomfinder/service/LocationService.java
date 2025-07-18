@@ -25,54 +25,89 @@ public class LocationService {
     private final LocationRepository locationRepository;
 
     public GeoJsonFeature findLocationGeoJson(Integer locationId) {
+        return getLocationAsGeoJson(locationId);
+    }
+
+    public List<GeoJsonFeature> findAllLocationsGeoJson() {
+        return fetchAllGeoJsonLocations();
+    }
+
+    public GeoJsonFeature addLocation(GeoJsonFeature geoJsonFeature) {
+        return convertAndSaveGeoJsonFeature(geoJsonFeature);
+    }
+
+    public void updateLocation(Integer locationId, GeoJsonFeature geoJsonFeature) {
+        updateLocationFromGeoJsonData(locationId, geoJsonFeature);
+    }
+
+    public void deleteLocation(Integer locationId) {
+        verifyLocationExists(locationId);
+        locationRepository.deleteById(locationId);
+    }
+
+    public GeoJsonFeature convertToGeoJsonFeature(MushroomLocationInfo locationInfo) {
+        return mapLocationInfoToGeoJsonFeature(locationInfo);
+    }
+
+    private GeoJsonFeature getLocationAsGeoJson(Integer locationId) {
         MushroomLocation mushroomLocation = locationRepository.findById(locationId)
-                .orElseThrow(() -> new RuntimeException("No such location exists"));
+                .orElseThrow(() -> new EntityNotFoundException("No such location exists"));
         MushroomLocationInfo locationInfo = locationMapper.toMushroomLocationDto(mushroomLocation);
         return convertToGeoJsonFeature(locationInfo);
     }
 
-    public List<GeoJsonFeature> findAllLocationsGeoJson() {
-        List<MushroomLocation> allMushroomLocations = locationRepository.findAll();
+    private static void validateLocationListNotEmpty(List<MushroomLocation> allMushroomLocations) {
         if (allMushroomLocations.isEmpty()) {
             throw new RuntimeException("No locations exist yet");
         }
+    }
+
+    private List<GeoJsonFeature> mapLocationsToGeoJsonFeatures(List<MushroomLocation> allMushroomLocations) {
         return allMushroomLocations.stream()
                 .map(locationMapper::toMushroomLocationDto)
                 .map(this::convertToGeoJsonFeature)
                 .collect(Collectors.toList());
     }
 
-    public GeoJsonFeature addLocation(GeoJsonFeature geoJsonFeature) {
+    private List<GeoJsonFeature> fetchAllGeoJsonLocations() {
+        List<MushroomLocation> allMushroomLocations = locationRepository.findAll();
+        validateLocationListNotEmpty(allMushroomLocations);
+        return mapLocationsToGeoJsonFeatures(allMushroomLocations);
+    }
+
+    private GeoJsonFeature convertAndSaveGeoJsonFeature(GeoJsonFeature geoJsonFeature) {
         MushroomLocation mushroomLocation = locationMapper.fromGeoJsonFeature(geoJsonFeature);
         MushroomLocation savedMushroomLocation = locationRepository.save(mushroomLocation);
         return locationMapper.toGeoJsonFeature(savedMushroomLocation);
     }
 
-    public void updateLocation(Integer locationId, GeoJsonFeature geoJsonFeature) {
-        MushroomLocation mushroomLocation = locationRepository.findById(locationId).orElseThrow(() -> new EntityNotFoundException("No such location exists"));
+    private void updateDescriptionFromGeoJson(GeoJsonFeature geoJsonFeature, MushroomLocation mushroomLocation) {
+        Object description = geoJsonFeature.getProperties().get("description");
+        if (description != null) {
+            mushroomLocation.setDescription(description.toString());
+        }
+    }
 
+    private void updateLocationFromGeoJsonData(Integer locationId, GeoJsonFeature geoJsonFeature) {
+        MushroomLocation mushroomLocation = locationRepository.findById(locationId)
+                .orElseThrow(() -> new EntityNotFoundException("No such location exists"));
         double[] coords = geoJsonFeature.getGeometry().getCoordinates();
-        if(coords == null || coords.length != 2) {
+        if (coords == null || coords.length != 2) {
             throw new IllegalArgumentException("Invalid GeoJSON coordinates");
         }
         LocationDto locationDto = new LocationDto(coords[0], coords[1]);
         mushroomLocation.setLocationDto(locationDto);
-
-        Object description = geoJsonFeature.getProperties().get("description");
-        if(description != null) {
-            mushroomLocation.setDescription(description.toString());
-        }
+        updateDescriptionFromGeoJson(geoJsonFeature, mushroomLocation);
         locationRepository.save(mushroomLocation);
     }
 
-    public void deleteLocation(Integer locationId) {
+    private void verifyLocationExists(Integer locationId) {
         if (!locationRepository.existsById(locationId)) {
             throw new EntityNotFoundException("Location with id " + locationId + " does not exist");
         }
-        locationRepository.deleteById(locationId);
     }
 
-    public GeoJsonFeature convertToGeoJsonFeature(MushroomLocationInfo locationInfo) {
+    private static GeoJsonFeature mapLocationInfoToGeoJsonFeature(MushroomLocationInfo locationInfo) {
         LocationDto location = locationInfo.getLocation();
         GeoJsonGeometry geometry = new GeoJsonGeometry(location.getX(), location.getY());
 

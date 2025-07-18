@@ -14,5 +14,4 @@ public class LocationDto {
 
     @Schema(example = "58.123456", description = "Latitude (Y coordinate)")
     private double y;
-//    private String description;
 }

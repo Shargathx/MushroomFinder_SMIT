@@ -34,11 +34,26 @@ public interface LocationMapper {
 
     default MushroomLocation fromGeoJsonFeature(GeoJsonFeature geoJsonFeature) {
         MushroomLocation mushroomLocation = new MushroomLocation();
+        getAndSetCoordinatesToPoint(geoJsonFeature, mushroomLocation);
+        extractAndSetDescription(geoJsonFeature, mushroomLocation);
+        return mushroomLocation;
+    }
+    default LocationDto map(Point point) {
+        return convertPointToLocationDto(point);
+    }
+
+    default Point map(LocationDto dto) {
+        return converLocationDtoToPoint(dto);
+    }
+
+    private static void getAndSetCoordinatesToPoint(GeoJsonFeature geoJsonFeature, MushroomLocation mushroomLocation) {
         double[] coords = geoJsonFeature.getGeometry().getCoordinates();
         Coordinate coordinate = new Coordinate(coords[0], coords[1]);
         Point point = new GeometryFactory(new PrecisionModel(), 4326).createPoint(coordinate);
         mushroomLocation.setLocation(point);
+    }
 
+    private static void extractAndSetDescription(GeoJsonFeature geoJsonFeature, MushroomLocation mushroomLocation) {
         Object props = geoJsonFeature.getProperties();
         if (props instanceof Map<?, ?> propsMap) {
             Object desc = propsMap.get("description");
@@ -46,10 +61,9 @@ public interface LocationMapper {
                 mushroomLocation.setDescription(desc.toString());
             }
         }
-        return mushroomLocation;
     }
 
-    default LocationDto map(Point point) {
+    private static LocationDto convertPointToLocationDto(Point point) {
         if (point == null) {
             return null;
         }
@@ -59,11 +73,16 @@ public interface LocationMapper {
         return dto;
     }
 
-    default Point map(LocationDto dto) {
+    private static Point converLocationDtoToPoint(LocationDto dto) {
         if (dto == null) {
             return null;
         }
         GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326); // WGS84 SRID
         return factory.createPoint(new Coordinate(dto.getX(), dto.getY()));
     }
+
+
 }
+
+
+
