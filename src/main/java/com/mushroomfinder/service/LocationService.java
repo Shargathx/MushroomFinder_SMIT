@@ -1,13 +1,15 @@
 package com.mushroomfinder.service;
 
 import com.mushroomfinder.MushroomLocation;
+import com.mushroomfinder.infrastructure.error.Error;
+import com.mushroomfinder.infrastructure.exception.DataNotFoundException;
+import com.mushroomfinder.infrastructure.exception.InvalidGeoJsonFormatException;
 import com.mushroomfinder.persistence.LocationMapper;
 import com.mushroomfinder.persistence.LocationRepository;
 import com.mushroomfinder.persistence.MushroomLocationInfo;
 import com.mushroomfinder.persistence.dto.GeoJsonFeature;
 import com.mushroomfinder.persistence.dto.GeoJsonGeometry;
 import com.mushroomfinder.persistence.dto.LocationDto;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +38,9 @@ public class LocationService {
         return convertAndSaveGeoJsonFeature(geoJsonFeature);
     }
 
-    public void updateLocation(Integer locationId, GeoJsonFeature geoJsonFeature) {
+    public GeoJsonFeature updateLocation(Integer locationId, GeoJsonFeature geoJsonFeature) {
         updateLocationFromGeoJsonData(locationId, geoJsonFeature);
+        return geoJsonFeature;
     }
 
     public void deleteLocation(Integer locationId) {
@@ -51,14 +54,14 @@ public class LocationService {
 
     private GeoJsonFeature getLocationAsGeoJson(Integer locationId) {
         MushroomLocation mushroomLocation = locationRepository.findById(locationId)
-                .orElseThrow(() -> new EntityNotFoundException("No such location exists"));
+                .orElseThrow(() -> new DataNotFoundException(Error.MUSHROOM_LOCATION_NOT_FOUND.getMessage(), Error.MUSHROOM_LOCATION_NOT_FOUND.getErrorCode()));
         MushroomLocationInfo locationInfo = locationMapper.toMushroomLocationDto(mushroomLocation);
         return convertToGeoJsonFeature(locationInfo);
     }
 
     private static void validateLocationListNotEmpty(List<MushroomLocation> allMushroomLocations) {
         if (allMushroomLocations.isEmpty()) {
-            throw new RuntimeException("No locations exist yet");
+            throw new DataNotFoundException(Error.NO_MUSHROOM_LOCATIONS_IN_DATABASE.getMessage(), Error.NO_MUSHROOM_LOCATIONS_IN_DATABASE.getErrorCode());
         }
     }
 
@@ -88,22 +91,23 @@ public class LocationService {
         }
     }
 
-    private void updateLocationFromGeoJsonData(Integer locationId, GeoJsonFeature geoJsonFeature) {
+    private MushroomLocation updateLocationFromGeoJsonData(Integer locationId, GeoJsonFeature geoJsonFeature) {
         MushroomLocation mushroomLocation = locationRepository.findById(locationId)
-                .orElseThrow(() -> new EntityNotFoundException("No such location exists"));
+                .orElseThrow(() -> new DataNotFoundException(Error.MUSHROOM_LOCATION_NOT_FOUND.getMessage(), Error.MUSHROOM_LOCATION_NOT_FOUND.getErrorCode()));
         double[] coords = geoJsonFeature.getGeometry().getCoordinates();
         if (coords == null || coords.length != 2) {
-            throw new IllegalArgumentException("Invalid GeoJSON coordinates");
+            throw new InvalidGeoJsonFormatException(Error.INVALID_GEOJSON_FORMAT.getMessage(), Error.INVALID_GEOJSON_FORMAT.getErrorCode());
         }
         LocationDto locationDto = new LocationDto(coords[0], coords[1]);
         mushroomLocation.setLocationDto(locationDto);
         updateDescriptionFromGeoJson(geoJsonFeature, mushroomLocation);
         locationRepository.save(mushroomLocation);
+        return mushroomLocation;
     }
 
     private void verifyLocationExists(Integer locationId) {
         if (!locationRepository.existsById(locationId)) {
-            throw new EntityNotFoundException("Location with id " + locationId + " does not exist");
+            throw new DataNotFoundException(Error.MUSHROOM_LOCATION_NOT_FOUND.getMessage(), Error.MUSHROOM_LOCATION_NOT_FOUND.getErrorCode());
         }
     }
 

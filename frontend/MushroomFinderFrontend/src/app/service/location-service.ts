@@ -9,7 +9,7 @@ import {MushroomFeature} from '../model/mushroom-feature.model';
 
 export class LocationService {
   private readonly getAllLocationsUrl = 'http://localhost:8080/locations';
-  private readonly postLocationUrl = 'http://localhost:8080/location';
+  private readonly postLocationUrl = 'http://localhost:8080/locations';
 
   constructor(private http: HttpClient) {
   }
