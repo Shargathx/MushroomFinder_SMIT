@@ -65,6 +65,10 @@ export class MapComponent implements OnInit {
   }
 
   private handleEmptyInputFields(): boolean {
+    return this.validateLocationInput();
+  }
+
+  private validateLocationInput() {
     if (this.coordinatesAreEmpty()) {
       this.displayCoordinateErrorMessage();
       return false;
@@ -191,6 +195,4 @@ export class MapComponent implements OnInit {
       this.currentMarker = L.marker(e.latlng, {icon: greyMarkerIcon}).addTo(this.map);
     }
   }
-
-
 }

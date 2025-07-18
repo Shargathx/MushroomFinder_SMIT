@@ -38,6 +38,7 @@ public interface LocationMapper {
         extractAndSetDescription(geoJsonFeature, mushroomLocation);
         return mushroomLocation;
     }
+
     default LocationDto map(Point point) {
         return convertPointToLocationDto(point);
     }
@@ -80,8 +81,6 @@ public interface LocationMapper {
         GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326); // WGS84 SRID
         return factory.createPoint(new Coordinate(dto.getX(), dto.getY()));
     }
-
-
 }
 
 
